@@ -19,14 +19,8 @@ public class MainAdventure {
         game = new MainAdventure();
         System.out.println("Welcome to the lovely world of Zorn!");
         System.out.println("Please enter your name:");
-
         playerName = sc.next();
         game.playerMovement();
-
-        int x = 5;
-        System.out.println(x > 2 ? x < 4 ? 10 : 8 : 7);
-
-
     }
 
 
