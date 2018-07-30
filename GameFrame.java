@@ -11,7 +11,7 @@ public class GameFrame {
     static JPanel titleNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel, areaPanel;
     static JLabel titleNameLabel, hpLabelNumber, weaponLabelName, areaName;
     static Font titleFont = new Font("AppleGothic", Font.BOLD, 70);
-    static Font normalFont = new Font("Times New Roman", Font.PLAIN, 28);
+    static Font normalFont = new Font("Times New Roman", Font.PLAIN, 22);
     static JTextArea mainTextArea;
     static JButton startButton, choice1Button, choice2Button, choice3Button, choice4Button;
     static TitleScreenHandler tsHandler = new TitleScreenHandler();
@@ -328,7 +328,8 @@ public class GameFrame {
             playerHP -= enemyDamage;
             hpLabelNumber.setText("HP: " + playerHP);
             if (playerHP > 0) {
-
+                battleActive = false;
+                dead();
             }
         }
     }
@@ -361,6 +362,15 @@ public class GameFrame {
 
     }
 
+    public static void dead(){
+        position = "Dead";
+        areaName.setText("You have died.");
+        choice1Button.setText(">");
+        choice2Button.setText("");
+        choice3Button.setText("");
+        choice4Button.setText("");
+    }
+
 
 
     public static class  TitleScreenHandler implements ActionListener{
@@ -389,6 +399,12 @@ public class GameFrame {
                             break;
                     }
                     break;
+
+                case "Dead":
+                    switch (yourChoice){
+                        case "c1":
+
+                    }
 
 
                 case "Town Gate":
