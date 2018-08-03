@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GameFrame {
@@ -26,16 +25,18 @@ public class GameFrame {
 
     // Items
     static int banditRing = 0;
+    static int torch = 0;
 
 
     // Events
     static int banditBattle = 0;
+    static int afterBanditBattleSpokeGuard = 0;
 
 
 
 
     public static void main(String[] args){
-        gameWindow();
+            gameWindow();
     }
 
 
@@ -200,14 +201,29 @@ public class GameFrame {
         mainTextArea.setText("There is a wooden walled in town here.\nA guard stands in front of the gate.\n\nWhat do you do?");
         choice1Button.setText("Speak to the Guard");
         choice2Button.setText("Attack the Guard");
-        choice3Button.setText("Leave");
-        choice4Button.setText("");
-
+        if (afterBanditBattleSpokeGuard == 1){
+            choice3Button.setText("Enter Town");
+        }
+        else {
+            choice3Button.setText("Leave");
+        }
+        if (afterBanditBattleSpokeGuard == 1){
+            choice4Button.setText("Leave");
+        }
+        else {
+            choice4Button.setText("");
+        }
     }
 
     public static void speakToGuard(){
         position = "speakToGuard";
-        mainTextArea.setText("Guard: Stand down outsider! Bandits have been raiding our town and caravans of late. If you desire entry, you must bring me one of their signet rings to prove your worth.");
+        if (banditRing == 1){
+            mainTextArea.setText("Humph, one of the bandits rings?  ...Seems like it's one of theirs... You might be alright, but if you cause any trouble, I'll throw you out myself.");
+            afterBanditBattleSpokeGuard = 1;
+        }
+        else {
+            mainTextArea.setText("Guard: Stand down outsider! Bandits have been raiding our town and caravans of late. If you desire entry, you must bring me one of \ntheir signet rings to prove your worth.");
+        }
         choice1Button.setText(">");
         choice2Button.setText("");
         choice3Button.setText("");
@@ -217,7 +233,7 @@ public class GameFrame {
 
     public static void attackGuard(){
         position = "attackGuard";
-        mainTextArea.setText("Guard: I knew it, you were one of the bandits!\n\n\nThe guard gave you a hard hit and knocked you back. Dealing 3 damage to you.");
+        mainTextArea.setText("Guard: I knew it, you were one of the bandits!\n\n\nThe guard gave you a hard hit and knocked you back. Dealing 3 \ndamage to you.");
         playerHP -= 3;
         hpLabelNumber.setText("HP: " + playerHP);
         choice1Button.setText(">");
@@ -242,7 +258,7 @@ public class GameFrame {
     public static void riverside(){
         position = "Riverside";
         areaName.setText(position);
-        mainTextArea.setText("You come across a river in the clearing, you are able to see the bottom through the clear water.\nWhat do you do?");
+        mainTextArea.setText("You come across a river in the clearing, you are able to see the \nbottom through the clear water.\nWhat do you do?");
         choice1Button.setText("Drink from river");
         choice2Button.setText("Investigate river.");
         choice3Button.setText("Leave");
@@ -262,10 +278,10 @@ public class GameFrame {
 
     public static void riverInvestigate(){
         position = "riverInvestigate";
-        mainTextArea.setText("You examine the river.\n\nAmongst the river bank you found a unsually large dirt mound with a dull shine." +
-                "\nInvestigating further, you pull out the shiny bit, revealing a new weapon!\n\nYou found a Short Sword!");
+        mainTextArea.setText("You examine the river.\n\nAmongst the river bank you found a unsually large dirt mound \nwith a dull shine." +
+                "\nInvestigating further, you pull out the shiny bit, revealing a new \nweapon!\n\nYou found a Short Sword!");
         weapon = "Short Sword";
-        weaponLabelName.setText("Short Sword");
+        weaponLabelName.setText("Weapon: " + weapon);
         choice1Button.setText(">");
         choice2Button.setText("");
         choice3Button.setText("");
@@ -294,7 +310,29 @@ public class GameFrame {
         choice4Button.setText("");
     }
 
+    public static void caveEntrance(){
+        position = "Cavern";
+        areaName.setText(position);
+        if (torch == 1) {
+            mainTextArea.setText("Lighting your torch, you make your way into the cave.  There is a sound of creature screeching as you approach, apparently it is not fond of light and has left you alone.");
+        }
+        mainTextArea.setText("Approaching the cavern, it has an eerie sound coming from deep inside the pitch blackness, hiding whatever is making that sound...");
+        choice1Button.setText("Continue into the cave");
+        choice2Button.setText("Leave");
+        choice3Button.setText("");
+        choice4Button.setText("");
+    }
 
+
+    public static void townEntrance(){
+        position = "Town Entrance";
+        areaName.setText(position);
+        mainTextArea.setText("You have entered the town.\nLooking around you can see it is a simple village");
+        choice1Button.setText("Town Center");
+        choice2Button.setText("Inn");
+        choice3Button.setText("Market");
+        choice4Button.setText("Leave");
+    }
 
 
 
@@ -304,42 +342,40 @@ public class GameFrame {
 
     // Battle Functionality
 
-    public static void attack(){
-        int playerDamage = 1;
-        if (weapon.equalsIgnoreCase("Stick")){
-            playerDamage = (int)(Math.random() * 4) + 1;
-        }
-        if (weapon.equalsIgnoreCase("Short Sword")){
-            playerDamage =(int)(Math.random() * 10) + 2;
-        }
-
-        mainTextArea.setText("You attack, dealing: "+playerDamage +" of damage.\n\n");
-        enemyHP -= playerDamage;
-
-        if (enemyHP < 0) {
-            victory();
-            banditBattle = 1;
-            mountainCave();
-        }
-        else {
-
-            int enemyDamage = (int)(Math.random() * 3) + 1;
-            mainTextArea.setText("You attack, dealing: "+playerDamage+" of damage.\n\n\nThe bandit retaliates and deals: "+enemyDamage+" points of damage.");
-            playerHP -= enemyDamage;
-            hpLabelNumber.setText("HP: " + playerHP);
-            if (playerHP > 0) {
-                battleActive = false;
-                dead();
+    public static void attack() {
+            int playerDamage = 1;
+            if (weapon.equalsIgnoreCase("Stick")) {
+                playerDamage = (int) (Math.random() * 4) + 1;
             }
-        }
+            if (weapon.equalsIgnoreCase("Short Sword")) {
+                playerDamage = (int) (Math.random() * 10) + 2;
+            }
+
+            mainTextArea.setText("You attack, dealing: " + playerDamage + " of damage.\n\n");
+            enemyHP -= playerDamage;
+
+            if (enemyHP < 0) {
+                victory();
+                banditBattle = 1;
+                mountainCave();
+            } else {
+
+                int enemyDamage = (int) (Math.random() * 3) + 1;
+                mainTextArea.setText("You attack, dealing: " + playerDamage + " of damage.\n\n\nThe bandit retaliates and deals: " + enemyDamage + " points of damage.");
+                playerHP -= enemyDamage;
+                hpLabelNumber.setText("HP: " + playerHP);
+                if (playerHP <= 0) {
+                    battleActive = false;
+                    dead();
+                }
+            }
     }
 
     public static void defend(){
         int enemyDamage = (int)(Math.random() * 2);
-        System.out.println("You take a defensive stance.\n\nThe bandit attacks and deals: "+enemyDamage+" points of damage.");
+        mainTextArea.setText("You take a defensive stance.\n\nThe bandit attacks and deals: "+enemyDamage+" points of damage.");
         playerHP -= enemyDamage;
         hpLabelNumber.setText("HP: " +playerHP);
-        battleScreen();
     }
 
     public static void victory(){
@@ -365,7 +401,8 @@ public class GameFrame {
     public static void dead(){
         position = "Dead";
         areaName.setText("You have died.");
-        choice1Button.setText(">");
+        mainTextArea.setText("Your journey has ended.");
+        choice1Button.setText("Start Over");
         choice2Button.setText("");
         choice3Button.setText("");
         choice4Button.setText("");
@@ -403,7 +440,7 @@ public class GameFrame {
                 case "Dead":
                     switch (yourChoice){
                         case "c1":
-
+                            gameWindow();
                     }
 
 
@@ -416,8 +453,17 @@ public class GameFrame {
                             attackGuard();
                             break;
                         case "c3":
+                            if (afterBanditBattleSpokeGuard == 1) {
+                                townEntrance();
+                                break;
+                            }
                             crossRoads();
                             break;
+                        case "c4":
+                            if (afterBanditBattleSpokeGuard == 1){
+                                crossRoads();
+                                break;
+                            }
                     }
                     break;
                 case "speakToGuard":
@@ -434,6 +480,21 @@ public class GameFrame {
                             break;
                     }
                     break;
+                case "Town Entrance":
+                    switch (yourChoice){
+                        case "c1":
+
+                            break;
+                        case "c2":
+
+                            break;
+                        case "c3":
+
+                            break;
+                        case "c4":
+                                crossRoads();
+                                break;
+                    }
                 case "Crossroads":
                     switch (yourChoice){
                         case "c1":
@@ -442,11 +503,12 @@ public class GameFrame {
                         case "c2":
                             if (banditBattle == 1){
                                 mountainCave();
+                                break;
                             }
                             else {
                                 mountainCaveStart();
+                                break;
                             }
-                            break;
                         case "c3":
                             riverside();
                             break;
@@ -495,7 +557,7 @@ public class GameFrame {
                 case "Entrance of Mountain Cavern":
                 switch (yourChoice){
                     case "c1":
-
+                        caveEntrance();
                         break;
                     case "c2":
                         crossRoads();
